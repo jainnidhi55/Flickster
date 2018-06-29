@@ -26,7 +26,7 @@ public class MovieTrailerActivity extends YouTubeBaseActivity {
     //the base URL for the API
     public final static String API_BASE_URL = "https://api.themoviedb.org/3";
     //the parameter name for the API key
-    public final static String API_KEY_PARAM = "api_key_utb";
+    public final static String API_KEY_PARAM = "api_key";
 
     //get the current movie
     Movie movie;
@@ -51,29 +51,12 @@ public class MovieTrailerActivity extends YouTubeBaseActivity {
         //initialize the client
         client = new AsyncHttpClient();
         // temporary test video id -- TODO replace with movie trailer video id
-        final String videoId = getTrailer();
+        //final String videoId = getTrailer();
+        getTrailer();
 
         //getTrailer();
 
-        // resolve the player view from the layout
-        YouTubePlayerView playerView = (YouTubePlayerView) findViewById(R.id.player);
 
-        // initialize with API key stored in secrets.xml
-        playerView.initialize(getString(R.string.api_key_utb), new YouTubePlayer.OnInitializedListener() {
-            @Override
-            public void onInitializationSuccess(YouTubePlayer.Provider provider,
-                                                YouTubePlayer youTubePlayer, boolean b) {
-                // do any work here to cue video, play video, etc.
-                youTubePlayer.cueVideo(videoId);
-            }
-
-            @Override
-            public void onInitializationFailure(YouTubePlayer.Provider provider,
-                                                YouTubeInitializationResult youTubeInitializationResult) {
-                // log the error
-                Log.e("MovieTrailerActivity", "Error initializing YouTube player");
-            }
-        });
 
     }
 
@@ -88,7 +71,7 @@ public class MovieTrailerActivity extends YouTubeBaseActivity {
         //set the request parameters
         RequestParams params = new RequestParams();
 
-        params.put(API_KEY_PARAM, getString(R.string.api_key_utb)); //API key, always required
+        params.put(API_KEY_PARAM, getString(R.string.api_key)); //API key, always required
         //execute a GET request expecting a JSON object response
         client.get(url, params, new JsonHttpResponseHandler() {
             @Override
@@ -99,6 +82,9 @@ public class MovieTrailerActivity extends YouTubeBaseActivity {
                     //iterate through result set and create Movie objects
                     JSONObject resObj = results.getJSONObject(0);
                     vidID = resObj.getString("key");
+                    setupYoutube();
+
+
                 } catch (JSONException e) {
                     logError("Failed to get video id", e, true);
                 }
@@ -111,6 +97,29 @@ public class MovieTrailerActivity extends YouTubeBaseActivity {
         });
 
         return vidID;
+    }
+
+    private void setupYoutube() {
+        // resolve the player view from the layout
+        YouTubePlayerView playerView = (YouTubePlayerView) findViewById(R.id.player);
+
+        // initialize with API key stored in secrets.xml
+        playerView.initialize(getString(R.string.api_key_utb), new YouTubePlayer.OnInitializedListener() {
+            @Override
+            public void onInitializationSuccess(YouTubePlayer.Provider provider,
+                                                YouTubePlayer youTubePlayer, boolean b) {
+                // do any work here to cue video, play video, etc.
+
+                youTubePlayer.cueVideo(vidID);
+            }
+
+            @Override
+            public void onInitializationFailure(YouTubePlayer.Provider provider,
+                                                YouTubeInitializationResult youTubeInitializationResult) {
+                // log the error
+                Log.e("MovieTrailerActivity", "Error initializing YouTube player");
+            }
+        });
     }
 
     //handle errors, log and alert user
