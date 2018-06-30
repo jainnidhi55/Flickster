@@ -24,7 +24,8 @@ The following **optional** features are implemented:
 
 The following **additional** features are implemented:
 
-* [ ] List anything else that you can get done to improve the app functionality!
+* [X] List anything else that you can get done to improve the app functionality!
+* [X] Included extra UI design and an image of the movie on the activities page. Upon clicking this image, the user sees the trailer. 
 
 ## Video Walkthrough
 
